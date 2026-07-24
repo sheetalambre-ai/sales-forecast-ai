@@ -1,0 +1,34 @@
+# Virtual environment
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Environment
+.env
+
+# Data
+data/raw/
+data/processed/
+
+# Generated reports
+reports/figures/
+reports/summary/
+
+# Models
+models/
+*.pkl
+*.joblib
+*.pt
+*.h5
+
+# OS
+.DS_Store
+Thumbs.db
