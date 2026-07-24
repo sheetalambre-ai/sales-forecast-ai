@@ -23,7 +23,6 @@ reports/figures/
 reports/summary/
 
 # Models
-models/
 *.pkl
 *.joblib
 *.pt

@@ -1,0 +1,36 @@
+"""
+Naive baseline forecasting model.
+"""
+
+import pandas as pd
+
+from models.base import BaseForecastModel
+
+
+class NaiveForecastModel(BaseForecastModel):
+    """
+    Predicts the last observed value from the training set.
+    """
+
+    def __init__(self):
+        self.last_value = None
+
+    def train(
+        self,
+        X_train: pd.DataFrame,
+        y_train: pd.Series,
+    ):
+        self.last_value = y_train.iloc[-1]
+
+    def predict(
+        self,
+        X_test: pd.DataFrame,
+    ):
+
+        return [self.last_value] * len(X_test)
+
+    def save(self, filepath):
+        pass
+
+    def load(self, filepath):
+        pass
