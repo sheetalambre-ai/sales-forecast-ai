@@ -40,7 +40,7 @@ class LinearRegressionModel(BaseForecastModel):
     ):
 
         save_model(
-            self.model,
+            self,
             filepath,
         )
 
@@ -49,4 +49,5 @@ class LinearRegressionModel(BaseForecastModel):
         filepath,
     ):
 
-        self.model = load_model(filepath)
+        loaded = load_model(filepath)
+        self.model = loaded.model

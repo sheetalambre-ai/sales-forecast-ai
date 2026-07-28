@@ -45,6 +45,13 @@ class FeatureEngineeringPipeline:
 
         return transformed_df
 
+    def fit_transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Fit and transform the dataset.
+        """
+        return self.transform(df)
+
+
     def save(
         self,
         df: pd.DataFrame,

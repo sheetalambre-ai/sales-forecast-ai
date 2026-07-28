@@ -11,6 +11,13 @@ class BaseForecastModel(ABC):
     Base interface for all forecasting models.
     """
 
+    @property
+    def name(self) -> str:
+        """
+        Return the name of the model.
+        """
+        return self.__class__.__name__
+
     @abstractmethod
     def train(
         self,

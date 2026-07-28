@@ -31,3 +31,10 @@ reports/summary/
 # OS
 .DS_Store
 Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Results
+reports/results/

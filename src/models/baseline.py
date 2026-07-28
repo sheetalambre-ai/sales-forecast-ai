@@ -5,6 +5,7 @@ Naive baseline forecasting model.
 import pandas as pd
 
 from models.base import BaseForecastModel
+from models.utils import save_model, load_model
 
 
 class NaiveForecastModel(BaseForecastModel):
@@ -30,7 +31,8 @@ class NaiveForecastModel(BaseForecastModel):
         return [self.last_value] * len(X_test)
 
     def save(self, filepath):
-        pass
+        save_model(self, filepath)
 
     def load(self, filepath):
-        pass
+        loaded = load_model(filepath)
+        self.last_value = loaded.last_value

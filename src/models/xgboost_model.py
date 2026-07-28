@@ -1,7 +1,7 @@
 """
-Random Forest forecasting model.
+XGBoost forecasting model.
 
-This module implements a Random Forest regressor that conforms to the
+This module implements an XGBoost regressor that conforms to the
 BaseForecastModel interface.
 """
 
@@ -9,10 +9,9 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
+from xgboost import XGBRegressor
 
-from config.model_params import RANDOM_FOREST_PARAMS
-
+from config.model_params import XGBOOST_PARAMS
 from models.base import BaseForecastModel
 from models.utils import (
     load_model,
@@ -20,9 +19,9 @@ from models.utils import (
 )
 
 
-class RandomForestModel(BaseForecastModel):
+class XGBoostModel(BaseForecastModel):
     """
-    Random Forest regression model.
+    XGBoost regression model.
     """
 
     def __init__(
@@ -35,15 +34,13 @@ class RandomForestModel(BaseForecastModel):
         Parameters
         ----------
         kwargs : dict
-            Optional parameters that override
-            RANDOM_FOREST_PARAMS.
+            Parameters that override XGBOOST_PARAMS.
         """
 
-        params = RANDOM_FOREST_PARAMS.copy()
-
+        params = XGBOOST_PARAMS.copy()
         params.update(kwargs)
 
-        self.model = RandomForestRegressor(
+        self.model = XGBRegressor(
             **params,
         )
 
@@ -51,14 +48,27 @@ class RandomForestModel(BaseForecastModel):
         self,
         X_train: pd.DataFrame,
         y_train: pd.Series,
+        X_valid: Optional[pd.DataFrame] = None,
+        y_valid: Optional[pd.Series] = None,
     ) -> None:
         """
-        Train the model.
+        Train the XGBoost model.
+
+        If a validation set is supplied, it is used as the evaluation set.
         """
+
+        fit_kwargs = {}
+
+        if X_valid is not None and y_valid is not None:
+            fit_kwargs["eval_set"] = [
+                (X_valid, y_valid)
+            ]
+            fit_kwargs["verbose"] = False
 
         self.model.fit(
             X_train,
             y_train,
+            **fit_kwargs,
         )
 
     def predict(
@@ -105,12 +115,20 @@ class RandomForestModel(BaseForecastModel):
         Return feature importances.
         """
 
+        if not hasattr(
+            self.model,
+            "feature_importances_",
+        ):
+            raise AttributeError(
+                "Model has not been trained yet."
+            )
+
         return self.model.feature_importances_
 
     @property
     def estimator(self):
         """
-        Return underlying sklearn estimator.
+        Return underlying XGBoost estimator.
         """
 
         return self.model

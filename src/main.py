@@ -1,56 +1,76 @@
+"""
+Main entry point for the Sales Forecast AI project.
+
+Usage:
+    python src/main.py
+"""
+
 from pathlib import Path
-from visualization.plots import generate_all_plots
-from visualization.summary import print_summary
-from visualization.report import save_summary_report
-from data_pipeline.loader import load_dataset, get_dataset_info
-from data_pipeline.validator import validate_dataset
-from data_pipeline.preprocess import preprocess_dataset
-from features.pipeline import FeatureEngineeringPipeline
+import sys
 
-RAW_DATA = Path("data/raw/train.csv")
-PROCESSED_DATA = Path("data/processed/processed_sales.csv")
+from benchmark import BenchmarkPipeline
+
+from config.paths import RAW_DATA_DIR
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 
-def main():
+def main() -> int:
+    """
+    Run the complete benchmarking pipeline.
 
-    print("=" * 50)
-    print("SALES FORECAST AI")
-    print("=" * 50)
+    Returns
+    -------
+    int
+        Exit status code.
+    """
 
-    # Load
-    df = load_dataset(RAW_DATA)
+    try:
 
-    # Summary
-    get_dataset_info(df)
+        dataset_path = RAW_DATA_DIR / "train.csv"
 
-    # Validation
-    validate_dataset(df)
+        logger.info("=" * 60)
+        logger.info("Sales Forecast AI")
+        logger.info("=" * 60)
 
-    # Preprocess
-    df = preprocess_dataset(df)
+        logger.info(
+            "Dataset: %s",
+            dataset_path,
+        )
 
-    # Save
-    PROCESSED_DATA.parent.mkdir(parents=True, exist_ok=True)
+        pipeline = BenchmarkPipeline(
+            data_path=dataset_path,
+        )
 
-    df.to_csv(PROCESSED_DATA, index=False)
+        results = pipeline.run()
 
-    print("\nProcessed dataset saved successfully.")
-    print(PROCESSED_DATA)
+        logger.info("\nFinal Rankings\n")
 
-    print_summary(df)
+        logger.info(
+            "\n%s",
+            results.to_string(index=False),
+        )
 
-    save_summary_report(df)
+        logger.info(
+            "\nPipeline completed successfully."
+        )
 
-    generate_all_plots(df)
+        return 0
 
-    pipeline = FeatureEngineeringPipeline()
+    except FileNotFoundError as error:
 
-    feature_df = pipeline.transform(df)
+        logger.exception(error)
 
-    pipeline.save(
-        feature_df,
-        "data/processed/sales_features.csv",
-    )
+        return 1
+
+    except Exception as error:
+
+        logger.exception(error)
+
+        return 1
+
 
 if __name__ == "__main__":
-    main()
+
+    sys.exit(main())

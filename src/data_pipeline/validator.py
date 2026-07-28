@@ -16,10 +16,13 @@ def check_datatypes(df: pd.DataFrame):
     return df.dtypes
 
 
-def validate_dataset(df: pd.DataFrame):
+def validate_dataset(df: pd.DataFrame) -> bool:
     """
     Validate dataset and print report.
     """
+
+    if df.empty:
+        raise ValueError("Dataset is empty.")
 
     print("\n" + "=" * 50)
     print("VALIDATION REPORT")
@@ -40,3 +43,5 @@ def validate_dataset(df: pd.DataFrame):
 
     print("\nData Types")
     print(check_datatypes(df))
+
+    return True
